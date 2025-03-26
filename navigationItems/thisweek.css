@@ -1,0 +1,151 @@
+:root {
+    --md-outlined-text-field-outline-width: 2px;
+    --md-outlined-select-text-field-outline-width: 2px;
+    --md-outlined-text-field-focus-outline-color: #2E3D1F;
+    --md-outlined-text-field-label-text-color: #2E3D1F;
+    --md-outlined-text-field-input-placeholder-color: #2E3D1F;
+    --md-outlined-text-field-input-text-size: 20px;
+    --md-outlined-button-container-shape: 20px;
+    --md-outlined-button-outline-width: 2px;
+    --md-outlined-button-outline-color: white;
+
+    --md-sys-font-family: "Poppins", sans-serif;
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-template-rows: 60px 1fr;
+    height: 100vh;
+    grid-template-areas:
+        "side header"
+        "side main";
+
+    font-family: "Poppins", sans-serif;
+    font-weight: 200;
+    font-style: normal;
+}
+
+
+.header {
+    background-color: white;
+
+
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin-left: 10%;
+
+    grid-area: header;
+}
+
+.search-field {
+    width: 900px;
+}
+
+.sidebar {
+    background-color: #2E3D1F;
+
+    position: sticky;
+    align-items: center;
+    justify-content: center;
+
+    grid-area: side;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.logo {
+    width: 100%;
+    max-width: 200px;
+}
+
+hr {
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 20%;
+    margin-bottom: 20%;
+}
+
+.barItems ul a {
+    position: sticky;
+    text-decoration: none;
+    display: block;
+    line-height: 65px;
+    font-size: 20px;
+    color: white;
+    font-weight: 600;
+    box-sizing: border-box;
+    justify-content: start;
+    padding-left: 40px;
+    white-space-collapse: collapse;
+    align-items: center;
+    display: flex;
+    transition: 0.4s;
+}
+
+
+ul li:hover a {
+    background-color: rgba(0, 0, 0, 0.301);
+}
+
+ul li a.active {
+    background-color: rgba(0, 0, 0, 0.301);
+}
+
+.main {
+    background-color: #adadad;
+
+    grid-area: main;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contents {
+    background-color: white;
+    
+    margin: 40px;
+    padding: 20px;
+    width: 100%;
+    height: 90%;
+}
+
+
+@media (max-width: 768) {
+    .main {
+        grid-template-columns: 1fr;
+        grid-template-columns: 200px;
+    }
+
+    .contents {
+        grid-area: initial !important;
+    }
+
+    .sidebar {
+        position: fixed;
+        width: 100px;
+        background-color: #2E3D1F;
+        display: none;
+    }
+
+    .show {
+        display: block;
+    }
+}
