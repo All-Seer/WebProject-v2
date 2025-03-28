@@ -124,6 +124,15 @@ body {
     position: relative;
 }
 
+form {
+    display: flex;
+    position: relative;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
 md-outlined-text-field {
     --md-outlined-text-field-container-height: 60px;
     --md-outlined-text-field-input-text-size: 20px;
@@ -266,4 +275,22 @@ md-filled-button {
         padding-left: 10%;
         padding-right: 10%;
     }
+}
+
+
+.error-message {
+    color: #d32f2f;
+    background-color: #ffebee;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
 }

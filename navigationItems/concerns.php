@@ -1,24 +1,64 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['isAuthenticated'])) {
+    header('Location: ../login.php');
+    exit();
+}
+?>
+
+
+<?php
+require_once '../config/db.php';
+
+try {
+    // Fetch only pending concerns
+    $stmt = $pdo->query("
+        SELECT 
+            id,
+            first_name as firstName,
+            middle_name as middleName,
+            last_name as lastName,
+            student_id as studentId,
+            personal_email as email,
+            phinmaed_email as phinmaed,
+            concern,
+            submission_date as date,
+            IFNULL(status, 'Pending') as status
+        FROM student_concerns
+        WHERE status = 'Pending' OR status IS NULL
+        ORDER BY submission_date DESC
+    ");
+
+    $concerns = $stmt->fetchAll();
+} catch (PDOException $e) {
+    die("Database error: " . $e->getMessage());
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="concerns.css">
+    <title>Pending Concerns</title>
+    <link rel="stylesheet" href="main.css">
 
     <!-- Material Design Web Components Import -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script type="importmap">
-    {
+        {
       "imports": {
         "@material/web/": "https://esm.run/@material/web/"
       }
     }
-  </script>
+    </script>
     <script type="module">
         import '@material/web/all.js';
-        import { styles as typescaleStyles } from '@material/web/typography/md-typescale-styles.js';
+        import {
+            styles as typescaleStyles
+        } from '@material/web/typography/md-typescale-styles.js';
 
         document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
     </script>
@@ -39,8 +79,13 @@
 <body>
     <header class="header">
         <div class="search-container">
-            <md-outlined-text-field class="search-field" id="search-field" placeholder="Search"><md-icon
-                    slot="leading-icon">search</md-icon></md-outlined-text-field>
+            <md-outlined-text-field
+                class="search-field"
+                id="search-field"
+                placeholder="Search"
+                oninput="searchTable(this.value)">
+                <md-icon slot="leading-icon">search</md-icon>
+            </md-outlined-text-field>
         </div>
 
         <mdc-dialog id="search-view">
@@ -51,10 +96,10 @@
     </header>
     <section class="sidebar" id="sidebar">
         <div class="logo-container">
-            <img src="/public/upangnavlogo.svg" alt="UPANG LOGO" class="logo">
+            <img src="/WebProject-v2/public/upangnavlogo.svg" alt="UPANG LOGO" class="logo">
         </div>
         <div class="barItems">
-        <ul>
+            <ul>
                 <li class="dashboard" id="nav"><a href="./dashboard.php"><span
                             class="material-symbols-outlined icon">bar_chart_4_bars</span>&ensp;Dashboard</a></li>
                 <li class="concerns" id="nav"><a href="./concerns.php"><span
@@ -67,7 +112,7 @@
                             class="material-symbols-outlined icon">bookmark_manager</span>&ensp;Manage Concerns</a></li>
                 <hr>
                 <li class="signOut" id="nav">
-                    <a href="/WebProject%20v2/login.php" id="toLogin">
+                    <a href="/WebProject-v2/login.php" id="toLogin">
                         <span class="material-symbols-outlined icon">move_item</span>&ensp;Sign Out
                     </a>
                 </li>
@@ -76,13 +121,53 @@
     </section>
     <main class="main">
         <div class="contents">
-            <!-- contents -->
+            <div class="dashboard-container">
+                <h1>Pending Concerns</h1>
+
+                <?php if (empty($concerns)): ?>
+                    <div class="empty-state">
+                        <span class="material-symbols-outlined">check_circle</span>
+                        <p>No pending concerns found</p>
+                    </div>
+                <?php else: ?>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Email</th>
+                                <th>Phinmaed Email</th>
+                                <th>Concern</th>
+                                <th>Date Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($concerns as $concern): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($concern['id']) ?></td>
+                                    <td><?= htmlspecialchars($concern['firstName'] . ' ' . ($concern['middleName'] ? $concern['middleName'] . ' ' : '') . $concern['lastName']) ?></td>
+                                    <td><?= htmlspecialchars($concern['studentId']) ?></td>
+                                    <td><?= htmlspecialchars($concern['email']) ?></td>
+                                    <td><?= htmlspecialchars($concern['phinmaed']) ?></td>
+                                    <td><?= htmlspecialchars($concern['concern']) ?></td>
+                                    <td><?= date('M j, Y g:i a', strtotime($concern['date'])) ?></td>
+                                    <td class="status-<?= strtolower($concern['status']) ?>">
+                                        <?= htmlspecialchars($concern['status']) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
         </div>
     </main>
 
+
     <script type="module">
         import "./main.js"
-        import "./concerns.js"
     </script>
 </body>
 

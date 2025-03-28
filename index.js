@@ -1,3 +1,8 @@
+document.getElementById("toLogin").addEventListener("click", () => {
+  window.location = "./login.php";
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('studentForm');
   const submitButton = document.getElementById('submitButton');

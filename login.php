@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+
+session_unset();
+
+$error = isset($_GET['error']) ? 'Invalid username or password' : '';
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +21,7 @@
     <!-- Material Design Web Components Import -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script type="importmap">
-    {
+        {
       "imports": {
         "@material/web/": "https://esm.run/@material/web/"
       }
@@ -19,7 +29,9 @@
   </script>
     <script type="module">
         import '@material/web/all.js';
-        import { styles as typescaleStyles } from '@material/web/typography/md-typescale-styles.js';
+        import {
+            styles as typescaleStyles
+        } from '@material/web/typography/md-typescale-styles.js';
 
         document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
     </script>
@@ -51,28 +63,28 @@
         </div>
         <div class="rightContainer">
             <div class="text3">Admin Login</div>
-            <md-outlined-text-field label="Username" placeholder="Admin123" type="name">
-            </md-outlined-text-field>
-            <md-outlined-text-field label="Password" type="password">
-            </md-outlined-text-field>
-
-            <md-filled-button id="tonavMain">
-                Login
-            </md-filled-button>
-
+            <?php if ($error): ?>
+                <div class="error-message"><?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
+            <form method="POST" action="authenticate.php">
+                <md-outlined-text-field label="Username" name="username" placeholder="Admin123"></md-outlined-text-field>
+                <md-outlined-text-field label="Password" name="password" type="password"></md-outlined-text-field>
+                <md-filled-button type="submit">Login</md-filled-button>
+            </form>
             <div class="hrOr">
                 <hr class="rightHR1">
                 <span>or</span>
                 <hr class="rightHR2">
             </div>
 
-            <md-outlined-button id="toConcern">Submit a concern</md-outlined-button>
+            <md-outlined-button onclick="window.location.href='index.php'">
+                Submit a concern
+            </md-outlined-button>
         </div>
     </div>
 
     <!-- Import JavaScript -->
     <script type="module">
-        import "./main.js"
         import "./login.js"
     </script>
 </body>

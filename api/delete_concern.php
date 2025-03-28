@@ -1,26 +1,34 @@
 <?php
 require_once '../config/db.php';
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header('Content-Type: application/json');
+
+header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: DELETE");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
 
-$id = $_GET['id'] ?? null;
-
-if (!$id) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Missing ID parameter']);
-    exit;
-}
+$input = json_decode(file_get_contents('php://input'), true);
 
 try {
-    $stmt = $pdo->prepare("DELETE FROM student_concerns WHERE id = ?");
-    $stmt->execute([$id]);
-    
-    echo json_encode(['success' => true, 'message' => 'Record deleted']);
-    
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Deletion failed', 'error' => $e->getMessage()]);
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new Exception("Method not allowed", 405);
+    }
+
+    if (empty($input['id'])) {
+        throw new Exception("Missing concern ID", 400);
+    }
+
+    $stmt = $pdo->prepare("DELETE FROM student_concerns WHERE id = :id");
+    $stmt->execute([':id' => $input['id']]);
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Concern deleted successfully'
+    ]);
+
+} catch (Exception $e) {
+    http_response_code($e->getCode() ?: 500);
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
 }
-?>

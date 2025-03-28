@@ -1,14 +1,19 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['isAuthenticated'])) {
+    header('Location: ../login.php');
+    exit();
+}
+?>
+<?php
 require_once '../config/db.php';
 
 try {
-    // Test the connection first
-    $pdo->query("SELECT 1")->fetch();
-    
-    // Count total records
-    $count = $pdo->query("SELECT COUNT(*) FROM student_concerns")->fetchColumn();
-    echo "Total records in table: " . $count . "<br><br>";
-    
+
+
+
+
     // Fetch and display all concerns
     $stmt = $pdo->query("
         SELECT 
@@ -18,16 +23,15 @@ try {
             last_name as lastName,
             student_id as studentId,
             personal_email as email,
+            phinmaed_email as phinmaed,
             concern,
             submission_date as date,
             IFNULL(status, 'Pending') as status
         FROM student_concerns
         ORDER BY submission_date DESC
     ");
-    
-    $concerns = $stmt->fetchAll();
-    
 
+    $concerns = $stmt->fetchAll();
 } catch (PDOException $e) {
     die("Database error: " . $e->getMessage());
 }
@@ -40,12 +44,12 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="main.css">
 
     <!-- Material Design Web Components Import -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script type="importmap">
-    {
+        {
       "imports": {
         "@material/web/": "https://esm.run/@material/web/"
       }
@@ -53,7 +57,9 @@ try {
   </script>
     <script type="module">
         import '@material/web/all.js';
-        import { styles as typescaleStyles } from '@material/web/typography/md-typescale-styles.js';
+        import {
+            styles as typescaleStyles
+        } from '@material/web/typography/md-typescale-styles.js';
 
         document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
     </script>
@@ -74,8 +80,13 @@ try {
 <body>
     <header class="header">
         <div class="search-container">
-            <md-outlined-text-field class="search-field" id="search-field" placeholder="Search"><md-icon
-                    slot="leading-icon">search</md-icon></md-outlined-text-field>
+            <md-outlined-text-field
+                class="search-field"
+                id="search-field"
+                placeholder="Search"
+                oninput="searchTable(this.value)">
+                <md-icon slot="leading-icon">search</md-icon>
+            </md-outlined-text-field>
         </div>
 
         <mdc-dialog id="search-view">
@@ -114,7 +125,7 @@ try {
             <!-- contents -->
             <div class="dashboard-container">
                 <h1>Student Concerns</h1>
-                
+
                 <?php if (isset($error)): ?>
                     <div class="error"><?= htmlspecialchars($error) ?></div>
                 <?php elseif (empty($concerns)): ?>
@@ -130,6 +141,7 @@ try {
                                 <th>Student Name</th>
                                 <th>Student ID</th>
                                 <th>Email</th>
+                                <th>Phinmaed Email</th>
                                 <th>Concern</th>
                                 <th>Date Submitted</th>
                                 <th>Status</th>
@@ -142,6 +154,7 @@ try {
                                     <td><?php echo htmlspecialchars($concern['firstName'] . ' ' . $concern['middleName'] . ' ' . $concern['lastName']); ?></td>
                                     <td><?= htmlspecialchars($concern['studentId']) ?></td>
                                     <td><?= htmlspecialchars($concern['email']) ?></td>
+                                    <td><?= htmlspecialchars($concern['phinmaed']) ?></td>
                                     <td><?= htmlspecialchars($concern['concern']) ?></td>
                                     <td><?= date('M j, Y g:i a', strtotime($concern['date'])) ?></td>
                                     <td class="status-<?= strtolower($concern['status']) ?>">
@@ -158,7 +171,6 @@ try {
 
     <script type="module">
         import "./main.js"
-        import "./dashboard.js"
     </script>
 </body>
 
