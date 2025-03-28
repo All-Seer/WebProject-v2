@@ -38,7 +38,7 @@
     <md-dialog id="autoCloseDialog">
 
         <div slot="headline" class="containerImg">
-            <img src="/public/check.gif" class="dialogImg" alt="Success">
+            <img src="./public/check.gif" class="dialogImg" alt="Success">
         </div>
         <div slot="headline" class="dialogHead">
             Success
@@ -55,7 +55,7 @@
 <body>
     <div class="parentContainer">
         <div class="leftContainer">
-            <img src="/public/upanglogoo-1.png" alt="UPANG LOGO" class="logo">
+            <img src="./public/upanglogoo-1.png" alt="UPANG LOGO" class="logo">
             <div class="text1">Submit your Concern</div>
             <md-outlined-button id="toLogin">Login As Admin</md-outlined-button>
         </div>

@@ -1,6 +1,9 @@
 <?php
 require_once '../config/db.php';
 
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
+
 try {
     $stmt = $pdo->query("
         SELECT 
@@ -16,7 +19,18 @@ try {
         ORDER BY submission_date DESC
     ");
     
-    $concerns = $stmt->fetchAll();
+    $data = $stmt->fetchAll();
+    
+    echo json_encode([
+        'success' => true,
+        'data' => $data
+    ]);
+    
 } catch (PDOException $e) {
-    $error = "Database error: " . $e->getMessage();
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database error',
+        'error' => $e->getMessage()
+    ]);
 }

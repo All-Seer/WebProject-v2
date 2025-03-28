@@ -1,103 +1,94 @@
 <?php
-// Enable full error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-header('Content-Type: application/json');
+// Set headers FIRST - before any output
+header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
 
+// Disable HTML error display
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Absolute path require to prevent include path issues
 require_once __DIR__ . '/../config/db.php';
 
 try {
-    // Get raw JSON input
-    $json = file_get_contents('php://input');
-    error_log("Raw input: " . $json); // Log raw input for debugging
-    
-    $data = json_decode($json, true);
-    
-    if (!$data) {
-        throw new Exception("Invalid JSON input: " . json_last_error_msg());
+    // Verify request method
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        throw new RuntimeException("Method not allowed", 405);
     }
 
-    $requiredFields = [
-        'firstName' => 'First name',
-        'lastName' => 'Last name',
-        'studentID' => 'Student ID',
-        'personalEmail' => 'Personal email',
-        'phinmaedEmail' => 'PHINMA Ed email',
-        'concern' => 'Concern'
-    ];
-
-    $optionalFields = [
-        'middleName' => 'Middle name'
-    ];
-
-    // Log decoded data for debugging
-    error_log("Decoded data: " . print_r($data, true));
-
-    // Required fields (middleName is optional)
-    $required = [
-        'firstName', 
-        'lastName',
-        'studentID', 
-        'personalEmail',
-        'phinmaedEmail',
-        'concern'
-    ];
+    // Get and validate JSON input
+    $json = file_get_contents('php://input');
+    if (empty($json)) {
+        throw new RuntimeException("Empty request body", 400);
+    }
+    
+    $input = json_decode($json, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new RuntimeException("Invalid JSON: " . json_last_error_msg(), 400);
+    }
 
     // Validate required fields
+    $required = ['firstName', 'lastName', 'studentId', 'personalEmail', 'phinmaedEmail', 'concern'];
     foreach ($required as $field) {
-        if (!isset($data[$field])) {
-            throw new Exception("Missing required field: $field");
-        }
-        if (empty(trim($data[$field]))) {
-            throw new Exception("Field cannot be empty: $field");
+        if (empty($input[$field])) {
+            throw new RuntimeException("Missing required field: $field", 400);
         }
     }
 
-    // Prepare SQL with all fields including middle_name
+    // Prepare SQL statement
     $stmt = $pdo->prepare("
-        INSERT INTO student_concerns 
-        (first_name, middle_name, last_name, student_id, personal_email, phinmaed_email, concern, status, submission_date) 
-        VALUES (:firstName, :middleName, :lastName, :studentID, :personalEmail, :phinmaedEmail, :concern, 'Pending', NOW())
-
+        INSERT INTO student_concerns (
+            first_name, 
+            middle_name,
+            last_name, 
+            student_id, 
+            personal_email, 
+            phinmaed_email, 
+            concern,
+            status,
+            submission_date
+        ) VALUES (
+            :firstName, 
+            :middleName,
+            :lastName, 
+            :studentId, 
+            :personalEmail, 
+            :phinmaedEmail, 
+            :concern,
+            'Pending',
+            NOW()
+        )
     ");
 
-    // Execute with all parameters
-    $stmt->execute([
-        ':firstName' => htmlspecialchars(trim($data['firstName'])),
-        ':middleName' => isset($data['middleName']) ? htmlspecialchars(trim($data['middleName'])) : null,
-        ':lastName' => htmlspecialchars(trim($data['lastName'])),
-        ':studentID' => htmlspecialchars(trim($data['studentID'])),
-        ':personalEmail' => htmlspecialchars(trim($data['personalEmail'])),
-        ':phinmaedEmail' => htmlspecialchars(trim($data['phinmaedEmail'])),
-        ':concern' => htmlspecialchars(trim($data['concern']))
+    // Execute with error handling
+    $success = $stmt->execute([
+        ':firstName' => $input['firstName'],
+        ':middleName' => $input['middleName'] ?? null,
+        ':lastName' => $input['lastName'],
+        ':studentId' => $input['studentId'],
+        ':personalEmail' => $input['personalEmail'],
+        ':phinmaedEmail' => $input['phinmaedEmail'],
+        ':concern' => $input['concern']
     ]);
 
-    // Success response
+    if (!$success) {
+        throw new RuntimeException("Database insert failed", 500);
+    }
+
+    // Successful response
     echo json_encode([
         'success' => true,
-        'message' => 'Submission successful',
+        'message' => 'Concern submitted successfully',
         'id' => $pdo->lastInsertId()
     ]);
 
-} catch (PDOException $e) {
-    http_response_code(500);
-    error_log("Database Error: " . $e->getMessage());
+} catch (Throwable $e) {
+    // Error response
+    http_response_code($e->getCode() >= 400 ? $e->getCode() : 500);
     echo json_encode([
         'success' => false,
-        'message' => 'Database error occurred',
-        'error' => $e->getMessage(),
-        'trace' => $e->getTraceAsString()
+        'message' => $e->getMessage(),
+        'error' => $e->getCode()
     ]);
-    exit;
-} catch (Exception $e) {
-    http_response_code(400);
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage()
-    ]);
-    exit;
+    exit(1);
 }
-?>

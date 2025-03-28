@@ -40,7 +40,7 @@
 <body>
     <div class="parentContainer">
         <div class="leftContainer">
-            <img src="/public/upanglogoo-1.png" alt="UPANG LOGO" class="logo">
+            <img src="./public/upanglogoo-1.png" alt="UPANG LOGO" class="logo">
             <div class="text1">Phinma UPang Email Concern</div>
             <div class="text2">CRUD System</div>
             <hr class="leftHR">

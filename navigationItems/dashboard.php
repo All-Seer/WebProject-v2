@@ -14,6 +14,7 @@ try {
         SELECT 
             id,
             first_name as firstName,
+            middle_name as middleName,
             last_name as lastName,
             student_id as studentId,
             personal_email as email,
@@ -85,7 +86,7 @@ try {
     </header>
     <section class="sidebar" id="sidebar">
         <div class="logo-container">
-            <img src="/public/upangnavlogo.svg" alt="UPANG LOGO" class="logo">
+            <img src="/WebProject-v2/public/upangnavlogo.svg" alt="UPANG LOGO" class="logo">
         </div>
         <div class="barItems">
             <ul>
@@ -101,7 +102,7 @@ try {
                             class="material-symbols-outlined icon">bookmark_manager</span>&ensp;Manage Concerns</a></li>
                 <hr>
                 <li class="signOut" id="nav">
-                    <a href="/WebProject%20v2/login.php" id="toLogin">
+                    <a href="/WebProject-v2/login.php" id="toLogin">
                         <span class="material-symbols-outlined icon">move_item</span>&ensp;Sign Out
                     </a>
                 </li>
@@ -138,7 +139,7 @@ try {
                             <?php foreach ($concerns as $concern): ?>
                                 <tr>
                                     <td><?= htmlspecialchars($concern['id']) ?></td>
-                                    <td><?php echo htmlspecialchars($concern['firstName'] . ' ' . htmlspecialchars($concern['lastName'])); ?>
+                                    <td><?php echo htmlspecialchars($concern['firstName'] . ' ' . $concern['middleName'] . ' ' . $concern['lastName']); ?></td>
                                     <td><?= htmlspecialchars($concern['studentId']) ?></td>
                                     <td><?= htmlspecialchars($concern['email']) ?></td>
                                     <td><?= htmlspecialchars($concern['concern']) ?></td>
