@@ -16,6 +16,7 @@ $error = isset($_GET['error']) ? 'Invalid username or password' : '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Admin Login</title>
+    <link rel="icon" href="./public/upangnavlogo.svg" type="image/icon type">
     <link rel="stylesheet" href="login.css">
 
     <!-- Material Design Web Components Import -->
@@ -67,8 +68,8 @@ $error = isset($_GET['error']) ? 'Invalid username or password' : '';
                 <div class="error-message"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
             <form method="POST" action="authenticate.php">
-                <md-outlined-text-field label="Username" name="username" placeholder="Admin123"></md-outlined-text-field>
-                <md-outlined-text-field label="Password" name="password" type="password"></md-outlined-text-field>
+                <md-outlined-text-field label="Username" name="username" placeholder="ADMIN" required></md-outlined-text-field>
+                <md-outlined-text-field label="Password" name="password" type="password" required></md-outlined-text-field>
                 <md-filled-button type="submit">Login</md-filled-button>
             </form>
             <div class="hrOr">

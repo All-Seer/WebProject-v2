@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Form</title>
+    <link rel="icon" href="./public/upangnavlogo.svg" type="image/icon type">
+
     <link rel="stylesheet" href="index.css">
 
     <!-- Material Design Web Components Import -->

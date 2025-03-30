@@ -1,5 +1,5 @@
 <?php
-// setup_database.php - Run this once to set up your database
+
 $host = "localhost";
 $user = "root";
 $pass = "";       
@@ -8,11 +8,9 @@ try {
     $pdo = new PDO("mysql:host=$host", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
-    // Create database
     $pdo->exec("CREATE DATABASE IF NOT EXISTS users");
     $pdo->exec("USE users");
     
-    // Create table
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS student_concerns (
             id INT AUTO_INCREMENT PRIMARY KEY,

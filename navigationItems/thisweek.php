@@ -58,6 +58,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>This Week's Concerns</title>
+    <link rel="icon" href="/WebProject-v2/public/upangnavlogo.svg" type="image/icon type">
     <link rel="stylesheet" href="main.css">
 
     <!-- Material Design Web Components Import -->

@@ -44,6 +44,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Concerns</title>
     <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="/WebProject-v2/public/upangnavlogo.svg" type="image/icon type">
 
     <!-- Material Design Web Components Import -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
